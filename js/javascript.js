@@ -33,13 +33,18 @@ function renderizarProductos(){
             <select id="size-${producto.id}">
                 ${producto.sizes.map(size => `<option value="${size}">${size}</option>`)}
             </select>
-            <button onclick="addCarrito(${producto.id})">Añadir al carrito</button>
+            <button class="addProducto" data-id="${producto.id}">Añadir al carrito</button>
         </div>
         `
     ).join('');
+    const btnAddCarritoList = document.querySelectorAll('.addProducto')
+    btnAddCarritoList.forEach(btnAdd => {
+        btnAdd.addEventListener('click', addCarrito)
+    });
 }
 
-function addCarrito(productoId){
+function addCarrito(e){
+    const productoId = parseInt(e.target.getAttribute('data-id'))
     const productoComprado = products.find(producto => producto.id === productoId);
     const size = document.getElementById(`size-${productoComprado.id}`).value;
     cartProductos.push({...productoComprado, size});
@@ -52,10 +57,15 @@ function updateCarrito(){
         <p>${item.name} ${item.size}</p>
         <div class="detalleCarrito">
             <p>${item.price.toFixed(2)} €</p> 
-            <button onclick="eliminarDelCarrito(${index})">🗑</button>
+            <button class="btnRemove" data-id="${index}">🗑</button>
         </div>
     </div>
     `).join('');
+
+    const btnRemoveCarritoList = document.querySelectorAll('.btnRemove')
+    btnRemoveCarritoList.forEach(btnAdd => {
+        btnAdd.addEventListener('click', eliminarDelCarrito)
+    });
 
     const total = cartProductos.reduce((sum, item) => sum + item.price, 0);
     totalCarrito.textContent = `Total ${total.toFixed(2)} €`;
@@ -67,7 +77,8 @@ function updateCarrito(){
     guardarCarrito();
 }
 
-function eliminarDelCarrito(indice){
+function eliminarDelCarrito(event){
+    const indice = parseInt(event.target.getAttribute('data-id'))
     cartProductos.splice(indice, 1);
     updateCarrito();
 }
